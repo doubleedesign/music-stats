@@ -1,17 +1,41 @@
 import express from 'express';
 import artists from './artists.js';
+import albums from './albums.js';
+import tracks from './tracks.js';
 import _ from 'lodash';
-import tracks from '../../data/tracks.json' assert { type: 'json' };
 
 const router = express.Router();
 
-router.get('/artists', (req, res, next) => {
-	const grouped = _.groupBy(tracks, 'album_artist');
-	const result = [];
-	Object.keys(grouped).map(artist => {
-		result.push(artists.getSummary(artist));
-	});
+router.get('/', (req, res, next) => {
+	const top_artists = artists.getTop(10);
+	const top_albums = albums.getTop(10);
+	const top_tracks = tracks.getTop(25);
 
+	const result = {
+		top_artists: {
+			count: top_artists.length,
+			data: top_artists
+		},
+		top_albums: {
+			count: top_albums.length,
+			data: top_albums
+		},
+		top_tracks: {
+			count: top_tracks.length,
+			data: top_tracks
+		}
+	};
+
+	res.json(result);
+});
+
+router.get('/artists', (req, res, next) => {
+	const result = artists.getAll();
+	res.json(_.sortBy(result, ['total_plays']).reverse());
+});
+
+router.get('/artists', (req, res, next) => {
+	const result = artists.getAll();
 	res.json(_.sortBy(result, ['total_plays']).reverse());
 });
 
@@ -27,6 +51,11 @@ router.get('/artist/:name/albums', (req, res, next) => {
 
 router.get('/artist/:name/tracks', (req, res, next) => {
 	const result = artists.getTracks(req.params.name);
+	res.json(result);
+});
+
+router.get('/albums', (req, res, next) => {
+	const result = albums.getAll();
 	res.json(result);
 });
 

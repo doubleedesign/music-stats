@@ -3,6 +3,35 @@ import _ from 'lodash';
 
 const artists = {
 	/**
+	 * Get all artists, sorted by total track play count
+	 * @return {*}
+	 */
+	getAll: function() {
+		const grouped = _.groupBy(tracks, 'album_artist');
+		const result = [];
+		Object.keys(grouped).map(artist => {
+			result.push(artists.getSummary(artist));
+		});
+
+		return _.sortBy(result, ['total_plays']).reverse();
+	},
+
+	/**
+	 * Get the top X most played artists
+	 * @param number
+	 * @return {*}
+	 */
+	getTop: function(number) {
+		const filtered = this.getAll().filter((item) => {
+			if(item.name !== 'Various Artists') {
+				return item;
+			}
+		});
+
+		return filtered.slice(0, number);
+	},
+
+	/**
 	 * Get all albums by an artist, sorted by year
 	 * @param artist
 	 * @return {{year: *, title: *, total_track_plays: *, tracks: *|unknown[]}[]}
