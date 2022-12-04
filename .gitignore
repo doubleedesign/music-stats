@@ -1,0 +1,5 @@
+/node_modules/
+/cli/node_modules/
+/server/node_modules/
+/cli/xml/Library.xml
+/data/tracks.json
