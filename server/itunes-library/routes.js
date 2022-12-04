@@ -5,7 +5,7 @@ import tracks from '../../data/tracks.json' assert { type: 'json' };
 
 const router = express.Router();
 
-router.get('/all', (req, res, next) => {
+router.get('/artists', (req, res, next) => {
 	const grouped = _.groupBy(tracks, 'album_artist');
 	const result = [];
 	Object.keys(grouped).map(artist => {
@@ -15,17 +15,17 @@ router.get('/all', (req, res, next) => {
 	res.json(_.sortBy(result, ['total_plays']).reverse());
 });
 
-router.get('/:name', (req, res, next) => {
+router.get('/artist/:name', (req, res, next) => {
 	const result = artists.getSummary(req.params.name);
 	res.json(result);
 });
 
-router.get('/:name/albums', (req, res, next) => {
+router.get('/artist/:name/albums', (req, res, next) => {
 	const result = artists.getAlbums(req.params.name);
 	res.json(result);
 });
 
-router.get('/:name/tracks', (req, res, next) => {
+router.get('/artist/:name/tracks', (req, res, next) => {
 	const result = artists.getTracks(req.params.name);
 	res.json(result);
 });

@@ -5,7 +5,7 @@ const app = express();
 app.use(express.urlencoded())
 app.use(express.json())
 
-app.use('/artist', artistRoutes);
+app.use('/library', artistRoutes);
 
 app.listen(4000, () => {
 	console.log('Server running on port 4000');
