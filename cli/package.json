@@ -4,6 +4,9 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "bin/index.js",
+	"engines": {
+		"node": ">=19.2.0"
+	},
 	"scripts": {
 		"start": "ts-node --esm index.ts",
 		"test": "echo \"Error: no test specified\" && exit 1"

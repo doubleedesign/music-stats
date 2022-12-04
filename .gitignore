@@ -3,3 +3,5 @@
 /server/node_modules/
 /cli/xml/Library.xml
 /data/tracks.json
+
+.idea/

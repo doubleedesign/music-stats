@@ -2,7 +2,6 @@ import express from 'express';
 import artists from './artists.js';
 import _ from 'lodash';
 import tracks from '../data/tracks.json' assert { type: 'json' };
-import { sortObjectAlphabetically } from '../utils.js';
 
 const app = express();
 app.listen(4000, () => {
