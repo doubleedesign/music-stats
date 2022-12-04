@@ -5,7 +5,7 @@
 	"description": "",
 	"main": "bin/index.js",
 	"engines": {
-		"node": ">=19.2.0"
+		"node": ">=18.12.1"
 	},
 	"scripts": {
 		"start": "ts-node --esm index.ts",
