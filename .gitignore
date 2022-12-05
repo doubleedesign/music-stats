@@ -5,3 +5,5 @@
 /data/tracks.json
 
 .idea/
+
+server/.env
