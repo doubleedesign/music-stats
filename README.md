@@ -19,8 +19,9 @@ Node/Express API app that:
 - Connects to Setlist.fm to get concert data (in progress). 
 
 Ideas for concert data:
-- Calculate most played songs in concert, songs opened with, songs played as encores. 
+- Calculate most played songs in concert, songs opened with, songs played as encores.
 - Calculate percentage difference in the sets played on a tour.
+- Calculate stats about songs played geographically (e.g., Melissa Etheridge plays mostly her early work in Australia and plays newer stuff in the US, how to show this?)
 - Create a dataset of concerts I've attended. Include data ready to put them on a map and to show stats.
 - Compare my most played songs to those played in concert (both all concerts and those I was at).
 
