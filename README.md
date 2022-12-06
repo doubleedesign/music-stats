@@ -27,6 +27,7 @@ Ideas for concert data:
 
 Other ideas:
 - Find a way to associate multiple versions of the same song, in a way that still keeps the track data separate but it can be counted together. I generally don't keep multiple identical versions of the same song (e.g., from an album _and_ a Best Of), but do have studio and live versions (sometimes multiple). For example, a variation on counting most played tracks that counts the In Blue, Unplugged, and Live in Dublin versions of The Corrs 'Radio' as one song, to correctly count how many times I've played 'Radio' when deciding my most played songs.
+- Identify cover versions and find ways to use that information.
 - Add functionality for annual play counts (calculated from the difference between a new upload and the previous data) and use them for annual summary (inspired by Spotify Wrapped). 
 
 ## Frontend
