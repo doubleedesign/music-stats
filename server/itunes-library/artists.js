@@ -50,11 +50,12 @@ const artists = {
 		});
 
 		let data = filtered.map(([title, tracks]) => {
+			const sorted_tracks = _.sortBy(tracks, ['track_number']);
 			return {
 				title: title,
 				year: tracks[0].year,
 				total_track_plays: tracks.reduce((accumulator, currentItem) => accumulator + currentItem.play_count, 0),
-				tracks: _.sortBy(tracks, ['track_number'])
+				tracks: _.map(sorted_tracks, item => _.pick(item, ['name', 'album', 'year', 'play_count', 'persistent_id']))
 			};
 		});
 
@@ -73,7 +74,8 @@ const artists = {
 	 */
 	getTracks: function(artist) {
 		const grouped = _.groupBy(tracks, 'album_artist');
-		return _.sortBy(grouped[artist], ['year', 'track_number']);
+		const sorted = _.sortBy(grouped[artist], ['year', 'track_number']);
+		return _.map(sorted, item => _.omit(item, ['track_id', 'sort_album', 'album_artist']));
 	},
 
 	/**
@@ -83,7 +85,7 @@ const artists = {
 	 */
 	getSummary: function(artist) {
 		const albums = this.getAlbums(artist);
-		const tracks = _.map(this.getTracks(artist), item => _.pick(item, ['name', 'play_count', 'album', 'year']));
+		const tracks = _.map(this.getTracks(artist), item => _.pick(item, ['name', 'album', 'year', 'play_count', 'persistent_id']));
 
 		return {
 			name: artist,

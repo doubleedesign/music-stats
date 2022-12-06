@@ -34,19 +34,14 @@ router.get('/artists', (req, res, next) => {
 	res.json(_.sortBy(result, ['total_plays']).reverse());
 });
 
-router.get('/artists', (req, res, next) => {
-	const result = artists.getAll();
-	res.json(_.sortBy(result, ['total_plays']).reverse());
-});
-
 router.get('/artist/:name', (req, res, next) => {
 	const result = artists.getSummary(req.params.name);
-	res.json(result);
+	res.json(result); // TODO: Error handling
 });
 
 router.get('/artist/:name/albums', (req, res, next) => {
-	const result = artists.getAlbums(req.params.name);
-	res.json(result);
+	const result = artists.getAlbums(req.params.name, true);
+	res.json(result); // TODO: Error handling
 });
 
 router.get('/artist/:name/tracks', (req, res, next) => {
@@ -61,6 +56,11 @@ router.get('/albums', (req, res, next) => {
 
 router.get('/album/:title', (req, res, next) => {
 	const result = albums.getSingle(encodeURIComponent(req.params.title));
+	res.status(result.status).json(result.data);
+});
+
+router.get('/track/:id', (req, res, next) => {
+	const result = tracks.getSingle(req.params.id);
 	res.status(result.status).json(result.data);
 });
 
