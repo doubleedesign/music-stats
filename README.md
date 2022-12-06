@@ -1,6 +1,6 @@
 # Music Stats
 
-**Background/Rationale:** I use iTunes to manage my music library (old school I know - I even still buy albums on CD...and then import them into iTunes). Two of the reasons I do this are the ability to customise the metadata, and the play counts which have roughly been going since 2012. (I say roughly because there was at least one instance where my PC library was temporarily out of sync with my iPod/iPhone and some got lost in the merge.)
+**Background/Rationale:** I use iTunes to manage my music library (old school I know - I even still buy albums on CD...and then import them into iTunes). Two of the reasons I do this are the ability to customise the metadata, and the play counts which have roughly been going since 2012. (I say roughly because there was at least one instance where my PC library was temporarily out of sync with my iPod/iPhone and some got lost in the merge, or I had to replace a corrupt file.)
 
 I came to realise that the play counts I'm so committed to don't tell the full story. My top 200 smart playlist shows the various songs I hardly ever skip for some reason and that I played Bruce Springsteen's "Cover Me" a lot after hearing it in concert; and it's fun to see if a song I have on repeat makes it into the list. But Melissa Etheridge not appearing until the 29th song, for example, isn't an accurate representation of my taste. Who are my most played artists? What about my most played albums? Which are my most played songs by those artists? etc.
 
@@ -28,6 +28,8 @@ Ideas for concert data:
 Other ideas:
 - Find a way to associate multiple versions of the same song, in a way that still keeps the track data separate but it can be counted together. I generally don't keep multiple identical versions of the same song (e.g., from an album _and_ a Best Of), but do have studio and live versions (sometimes multiple). For example, a variation on counting most played tracks that counts the In Blue, Unplugged, and Live in Dublin versions of The Corrs 'Radio' as one song, to correctly count how many times I've played 'Radio' when deciding my most played songs.
 - Identify cover versions and find ways to use that information.
+- Add more complete metadata for the composer field - consider writers, producers etc; then what can be done with that data (consider Discogs API rather than manual?).
+- Better handling of Best Of/Greatest Hits/etc compliations: Currently, I generally reassign tracks on these albums to their original album if there is one and avoid having duplicates. But it would be cool to have "appears on" data for songs (which would also link into the grouping of versions). Discogs or a similar API might be good for this, to show such data without having duplicates in my actual library.
 - Add functionality for annual play counts (calculated from the difference between a new upload and the previous data) and use them for annual summary (inspired by Spotify Wrapped). 
 
 ## Frontend
