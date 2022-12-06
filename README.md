@@ -36,5 +36,10 @@ Other ideas:
 - Better handling of Best Of/Greatest Hits/etc compliations: Currently, I generally reassign tracks on these albums to their original album if there is one and avoid having duplicates. But it would be cool to have "appears on" data for songs (which would also link into the grouping of versions). Discogs or a similar API might be good for this, to show such data without having duplicates in my actual library.
 - Add functionality for annual play counts (calculated from the difference between a new upload and the previous data) and use them for annual summary (inspired by Spotify Wrapped). 
 
+General TODOs:
+- TypeScript everything.
+- Unit tests.
+- Automatic deployment from GitHub.
+
 ## Frontend
 Still to come.
