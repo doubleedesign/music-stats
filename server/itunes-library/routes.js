@@ -59,4 +59,9 @@ router.get('/albums', (req, res, next) => {
 	res.json(result);
 });
 
+router.get('/album/:title', (req, res, next) => {
+	const result = albums.getSingle(encodeURIComponent(req.params.title));
+	res.status(result.status).json(result.data);
+});
+
 export default router;

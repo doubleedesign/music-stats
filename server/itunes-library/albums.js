@@ -42,6 +42,36 @@ const albums = {
 		}
 
 		return data;
+	},
+
+	/**
+	 * Search for albums by name
+	 * @param title
+	 */
+	searchFor: function(title) {
+		// TODO. Return all albums containing the search query in the title
+	},
+
+	/**
+	 * Get a single album by its name (because albums don't have IDs)
+	 * @param title
+	 * @returns {{data: string, status: number}|{data: *, status: number}}
+	 */
+	getSingle: function(title) {
+		const result = this.getAll().find(item => item.title === decodeURIComponent(title));
+
+		if(result) {
+			return {
+				status: 200,
+				data: result
+			};
+		}
+		else {
+			return {
+				status: 404,
+				data: `Album "${title}" not found`
+			};
+		}
 	}
 };
 
