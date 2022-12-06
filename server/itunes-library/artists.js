@@ -34,14 +34,22 @@ const artists = {
 	/**
 	 * Get all albums by an artist, sorted by year
 	 * @param artist
+	 * @param withTracks
 	 * @return {{year: *, title: *, total_track_plays: *, tracks: *|unknown[]}[]}
 	 */
-	getAlbums: function(artist) {
+	getAlbums: function(artist, withTracks = false) {
 		const grouped = _.groupBy(tracks, 'album_artist');
 		const this_artist = grouped[artist];
 		const albums = _.groupBy(this_artist, 'album');
 
-		const data = Object.entries(albums).map(([title, tracks]) => {
+		// Don't group tracks without an album into an album with an empty title
+		const filtered = Object.entries(albums).filter(([title, data]) => {
+			if (title !== '') {
+				return [title, tracks];
+			}
+		});
+
+		let data = filtered.map(([title, tracks]) => {
 			return {
 				title: title,
 				year: tracks[0].year,
@@ -49,6 +57,10 @@ const artists = {
 				tracks: _.sortBy(tracks, ['track_number'])
 			};
 		});
+
+		if(!withTracks) {
+			data = _.map(data, item => _.omit(item, 'tracks'));
+		}
 
 		return _.sortBy(data, ['year']);
 	},
@@ -67,11 +79,11 @@ const artists = {
 	/**
 	 * Get a summary of artist data and library stats
 	 * @param artist
-	 * @return {{albums: *[], total_plays: {year: *, title: *, total_track_plays: *, tracks: (*|*[])}, most_played: {albums: T[], tracks: T[]}, name}}
+	 * @return {{albums: *[], total_plays: {year: *, title: *, total_track_plays: *, tracks: (*|?[])}, most_played: {albums: T[], tracks: T[]}, name}}
 	 */
 	getSummary: function(artist) {
 		const albums = this.getAlbums(artist);
-		const tracks = this.getTracks(artist);
+		const tracks = _.map(this.getTracks(artist), item => _.pick(item, ['name', 'play_count', 'album', 'year']));
 
 		return {
 			name: artist,
@@ -79,7 +91,7 @@ const artists = {
 			albums: albums.map(album => album.title),
 			most_played: {
 				albums: _.sortBy(albums, ['total_track_plays']).reverse().slice(0,3),
-				tracks: _.sortBy(tracks, ['play_count']).reverse().slice(0,5),
+				tracks: _.sortBy(tracks, ['play_count']).reverse().slice(0,10),
 			}
 		};
 	}

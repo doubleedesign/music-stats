@@ -15,8 +15,12 @@ Future ideas:
 
 ## Server
 Node/Express API app that:
-- Further manipulates the data from the iTunes library to provide insights such as albums by artist, play counts of albums, play counts of artists, etc.
+- Further manipulates the data from the iTunes library to provide insights such as albums by artist, play counts of albums, play counts of artists, etc. 
+  - The specifics of data returned is different according to the context.
+  - Currently broken up into three main modules: Artists, albums, and tracks. Some duplication of functionality is there though, so still considering if some things should be brought together in a utils module or something.
 - Connects to Setlist.fm to get concert data (in progress). 
+
+All with a lot of help from [lodash](https://lodash.com/).
 
 Ideas for concert data:
 - Calculate most played songs in concert, songs opened with, songs played as encores.
