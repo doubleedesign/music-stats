@@ -36,6 +36,7 @@ const parseXML = () => {
 		// Initialise object that will store the data for this individual track
 		const formatted: Track = {
 			track_id: 0,
+			persistent_id: '',
 			name: '',
 			play_count: 0,
 			total_time: '',
@@ -73,10 +74,13 @@ const parseXML = () => {
 				// @ts-ignore
 				const value: string = thisValueData[0]['value'];
 
-				// There's some "tracks" I don't actually want - TV show episodes
-				// At the time of writing, they're all from the iTunes store,
+				// There's some "tracks" I don't actually want - TV show episodes and sound clips
+				// At the time of writing, all TV shows are from the iTunes store,
 				// so "Kind": "Purchased MPEG-4 video file" is a reasonable way to find and exclude them
 				if(key === 'Kind' && value === 'Purchased MPEG-4 video file') {
+					return;
+				}
+				if(key === 'Genre' && value === 'Sound Clip') {
 					return;
 				}
 

@@ -1,5 +1,6 @@
 export type Track = {
 	track_id: number;
+	persistent_id: string;
 	name: string;
 	play_count: number,
 	total_time: string;
