@@ -12,8 +12,8 @@ import { CosmosClient } from '@azure/cosmos';
 const parseXML = () => {
 	const file = readFileSync('./xml/Library.xml', 'utf8');
 
-	// preserveOrder is important!
-	// without this, we get a tricky and unreliable format of
+	// Parse XML to JSON using fast-xml-parser library
+	// NOTE: preserveOrder is important! Without it, we get a tricky and unreliable structure of
 	// {key: all the keys, string: all the values that are strings, ...etc for all the data types present}
 	// with it, they stay in order e.g. key: {data about the key}, string:{the value and data about it}
 	const parser = new XMLParser({
@@ -22,6 +22,17 @@ const parseXML = () => {
 		textNodeName: 'value'
 	});
 	const json = parser.parse(file);
+
+	// Get the date of the export
+	const date = Date.parse(json[0].plist[0].dict[7].date[0].value);
+	if(isNaN(date)) {
+		throw new TypeError('Valid export date not found. XML data structure may have changed, ' +
+			'in which case you need to update the source of "date" on line 31.');
+	}
+	const modified = new Date(date).toISOString().split('T')[0];
+	console.log(modified);
+
+	// Get track data
 	const data = json[0].plist[0].dict;
 	const raw = data[data.length - 1].dict; // assuming the <dict> containing the tracks is the last element
 
@@ -81,21 +92,21 @@ const parseXML = () => {
 				// There's some "tracks" I don't actually want - TV show episodes and sound clips
 				// At the time of writing, all TV shows are from the iTunes store,
 				// so "Kind": "Purchased MPEG-4 video file" is a reasonable way to find and exclude them
-				if(key === 'Kind' && value === 'Purchased MPEG-4 video file') {
+				if (key === 'Kind' && value === 'Purchased MPEG-4 video file') {
 					return;
 				}
-				if(key === 'Genre' && value === 'Sound Clip') {
+				if (key === 'Genre' && value === 'Sound Clip') {
 					return;
 				}
 
 				// There's also more data than I actually want, so let's only include what's specified in the Track type
 				key = key.toLowerCase().replaceAll(' ', '_');
-				if(Object.keys(formatted).includes(key)) {
+				if (Object.keys(formatted).includes(key)) {
 					formatted[key] = value;
 				}
 
 				// Handle known data inconsistencies
-				if(!formatted['album_artist']) {
+				if (!formatted['album_artist']) {
 					formatted['album_artist'] = formatted['artist'];
 				}
 			}
@@ -105,6 +116,17 @@ const parseXML = () => {
 	});
 
 	// Save to a JSON file
+	saveJSONFile(tracks);
+
+	// Save to Azure CosmosDB
+	sendToCosmos(tracks, modified).then();
+};
+
+/**
+ * Save processed data as a JSON file
+ * @param tracks
+ */
+function saveJSONFile(tracks) {
 	writeFile('../data/tracks.json', JSON.stringify(tracks, null, 4), 'utf8', function (err) {
 		if (err) {
 			console.log('An error occurred while writing to file.');
@@ -113,26 +135,33 @@ const parseXML = () => {
 
 		console.log('JSON file has been saved.');
 	});
+}
 
-	// Save to Azure CosmosDB
-	sendToCosmos(tracks).then();
-};
-
-async function sendToCosmos(tracks) {
+/**
+ * Save processed data in CosmosDB NoSQL database
+ * @param tracks
+ * @param export_date
+ */
+async function sendToCosmos(tracks, export_date) {
 	const key = process.env.COSMOS_KEY;
 	const endpoint = process.env.COSMOS_ENDPOINT;
-
 	const cosmosClient = new CosmosClient({ endpoint, key });
-	const { database } = await cosmosClient.databases.createIfNotExists({ id: 'musicData' });
+
+	const database  = await cosmosClient.database('musicData');
 	console.log(`Connected to ${database.id} database successfully`);
 
-	const { container } = await database.containers.createIfNotExists({ id: 'catalogue' });
+	// Create container with the date of the iTunes export so data over time can be compared
+	const { container } = await database.containers.createIfNotExists({ id: `catalogue_${export_date}` });
 	console.log(`${container.id} container ready`);
 
+	let count = 1;
 	for (const item of tracks) {
 		const { resource } = await container.items.create(item);
-		console.log(`'${resource.name}' inserted`);
+		count++;
+		console.log(`${count}.\t '${resource.name}' inserted`);
 	}
+
+	console.log(`${count} tracks successfully added to database container catalogue_${export_date}`);
 }
 
 parseXML();
