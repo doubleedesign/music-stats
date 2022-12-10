@@ -6,9 +6,8 @@
 
 /server/node_modules/
 /server/.env
+/server/data/*
 
 /data/tracks.json
 
 .idea/
-
-

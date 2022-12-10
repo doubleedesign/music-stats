@@ -1,7 +1,10 @@
 import axios from 'axios';
 import * as fs from 'fs';
+import { CosmosClient } from '@azure/cosmos';
 const api = 'https://api.setlist.fm/rest/1.0';
-import savedArtists from '../../data/setlist_artists.json' assert { type: 'json' };
+import savedArtists from '../data/setlist_artists.json' assert { type: 'json' }; // TODO: Get this from the database and use the JSON for local dev and testing only
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const setlistfm = {
 	/**
@@ -15,6 +18,7 @@ const setlistfm = {
 		const url = `${api}/search/artists?artistName=${encodeURIComponent(name)}&p=1&sort=sortName`;
 		let result;
 
+		// TODO: Update this to query the database
 		const saved = savedArtists.find(item => item.name === name);
 		if (saved) {
 			result = {
@@ -41,7 +45,8 @@ const setlistfm = {
 					})
 				};
 
-				this.saveArtist(result.data);
+				await this.saveArtist(result.data);
+
 				return result;
 			}
 			catch (error) {
@@ -60,11 +65,24 @@ const setlistfm = {
 	 * This means we can get artist IDs for further Setlist searches without querying their API every time we need an ID
 	 * @param data
 	 */
-	saveArtist: function(data) {
-		const jsonString = fs.readFileSync('../data/setlist_artists.json');
+	saveArtist: async function (data) {
+		// Save to CosmosDB
+		// Note: When doing this before the local file save,
+		// somehow the Cosmos ID is magically added to the data object (presumably by the Cosmos client)
+		const key = process.env.COSMOS_KEY;
+		const endpoint = process.env.COSMOS_ENDPOINT;
+		const cosmosClient = new CosmosClient({ endpoint, key });
+
+		const database = await cosmosClient.database('musicData');
+		const container = await database.container('lineup');
+		await container.items.create(data);
+
+		// Save to file for local use
+		// TODO: Only do this in local environment
+		const jsonString = fs.readFileSync('./data/setlist_artists.json');
 		const jsonObject = JSON.parse(jsonString);
 		jsonObject.push(data);
-		fs.writeFileSync('../data/setlist_artists.json', JSON.stringify(jsonObject, null, 4));
+		fs.writeFileSync('./data/setlist_artists.json', JSON.stringify(jsonObject, null, 4));
 	},
 
 	/**
