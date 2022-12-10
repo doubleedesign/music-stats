@@ -9,7 +9,7 @@
 	},
 	"scripts": {
 		"start": "node app.js",
-		"start:local": "nodemon --watch"
+		"start:local": "set NODE_ENV=LOCAL && nodemon --watch"
 	},
 	"author": "Leesa Ward",
 	"dependencies": {
