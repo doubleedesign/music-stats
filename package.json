@@ -6,22 +6,20 @@
 	"main": "index.js",
 	"scripts": {
 		"lint:js": "eslint **/*.js",
-		"commit": "npm run lint:js && git-cz",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"commit": "npm run lint:js && git-cz"
 	},
 	"author": "Leesa Ward",
 	"dependencies": {
 		"@types/node": "^18.11.10",
-		"cz-conventional-changelog": "^3.3.0",
-		"eslint": "^8.29.0",
 		"ts-node": "^10.9.1",
-		"typescript": "^4.9.3",
-		"typescript-eslint-parser": "^22.0.0"
+		"typescript": "^4.9.3"
 	},
 	"devDependencies": {
+		"eslint": "^8.29.0",
 		"@typescript-eslint/eslint-plugin": "^5.31.0",
 		"@typescript-eslint/parser": "^5.31.0",
-		"commitizen": "^4.2.5"
+		"commitizen": "^4.2.5",
+		"cz-conventional-changelog": "^3.3.0"
 	},
 	"config": {
 		"commitizen": {

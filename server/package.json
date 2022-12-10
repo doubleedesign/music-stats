@@ -8,8 +8,8 @@
 		"node": ">=18.12.1"
 	},
 	"scripts": {
-		"start": "nodemon --watch",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"start": "node app.js",
+		"start:local": "nodemon --watch"
 	},
 	"author": "Leesa Ward",
 	"dependencies": {
