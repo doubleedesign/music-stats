@@ -1,4 +1,4 @@
-import data from '../../data/tracks.json' assert { type: 'json' };
+import data from '../data/tracks_test.json' assert { type: 'json' };
 import _ from 'lodash';
 
 const tracks = {
