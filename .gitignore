@@ -1,9 +1,14 @@
 /node_modules/
+
 /cli/node_modules/
-/server/node_modules/
+/cli/.env
 /cli/xml/Library.xml
+
+/server/node_modules/
+/server/.env
+
 /data/tracks.json
 
 .idea/
 
-server/.env
+

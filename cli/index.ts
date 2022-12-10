@@ -1,6 +1,10 @@
 import { XMLParser } from 'fast-xml-parser';
 import { readFileSync, writeFile } from 'fs';
 import { Track } from '../types';
+import * as dotenv from 'dotenv';
+dotenv.config();
+import { CosmosClient } from '@azure/cosmos';
+
 
 // Expecting iTunes library XML export for the file. Notes:
 // Remove playlists, so it's just the track data
@@ -100,7 +104,7 @@ const parseXML = () => {
 		tracks.push(formatted);
 	});
 
-	// Finally, save to a JSON file
+	// Save to a JSON file
 	writeFile('../data/tracks.json', JSON.stringify(tracks, null, 4), 'utf8', function (err) {
 		if (err) {
 			console.log('An error occurred while writing to file.');
@@ -109,6 +113,26 @@ const parseXML = () => {
 
 		console.log('JSON file has been saved.');
 	});
+
+	// Save to Azure CosmosDB
+	sendToCosmos(tracks).then();
 };
+
+async function sendToCosmos(tracks) {
+	const key = process.env.COSMOS_KEY;
+	const endpoint = process.env.COSMOS_ENDPOINT;
+
+	const cosmosClient = new CosmosClient({ endpoint, key });
+	const { database } = await cosmosClient.databases.createIfNotExists({ id: 'musicData' });
+	console.log(`Connected to ${database.id} database successfully`);
+
+	const { container } = await database.containers.createIfNotExists({ id: 'catalogue' });
+	console.log(`${container.id} container ready`);
+
+	for (const item of tracks) {
+		const { resource } = await container.items.create(item);
+		console.log(`'${resource.name}' inserted`);
+	}
+}
 
 parseXML();
