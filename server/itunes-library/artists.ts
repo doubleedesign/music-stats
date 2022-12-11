@@ -1,17 +1,18 @@
 import { cosmosQueries } from '../cosmos/cosmos-utils.js';
+import { Album, Artist, Track, TracksResponse } from '../types';
 import _ from 'lodash';
 
 const artists = {
 	/**
 	 * Get all artists, sorted by total track play count
-	 * @return {*}
+	 * @return Promise<Artist[]>
 	 */
-	getAll: async function () {
-		const { tracks } = await cosmosQueries.getAllTracks();
-		const grouped = _.groupBy(tracks, 'album_artist');
-		const result = [];
-		Object.keys(grouped).map(artist => {
-			result.push(artists.getSummary(artist));
+	getAll: async function (): Promise<Artist[]> {
+		const response: TracksResponse = await cosmosQueries.getAllTracks();
+		const grouped: {string: Track[]} = _.groupBy(response?.tracks, 'album_artist');
+		const result: Artist[] = [];
+		Object.keys(grouped).map(async (artist: string) => {
+			result.push(await artists.getSummary(artist));
 		});
 
 		return _.sortBy(result, ['total_plays']).reverse();
@@ -38,23 +39,23 @@ const artists = {
 	 * @param withTracks
 	 * @return {{year: *, title: *, total_track_plays: *, tracks: *|unknown[]}[]}
 	 */
-	getAlbums: async function(artist, withTracks = false) {
+	getAlbums: async function(artist: string, withTracks = false): Promise<Album[]> {
 		const { tracks } = await cosmosQueries.getTracks('album_artist', artist);
-		const albums = _.groupBy(tracks, 'album');
+		const albums: {string: Track[]} = _.groupBy(tracks, 'album');
 
 		// Don't group tracks without an album into an album with an empty title
-		const filtered = Object.entries(albums).filter(([title, data]) => {
+		const filtered: [string, Track[]][] = Object.entries(albums).filter(([title, tracks]) => {
 			if (title !== '') {
 				return [title, tracks];
 			}
 		});
 
-		let data = filtered.map(([title, tracks]) => {
+		let data: Album[] = filtered.map(([title, tracks]) => {
 			const sorted_tracks = _.sortBy(tracks, ['track_number']);
 			return {
 				title: title,
 				year: tracks[0].year,
-				total_track_plays: undefined, //tracks.reduce((accumulator, currentItem) => accumulator + currentItem.play_count, 0),
+				total_track_plays: tracks.reduce((accumulator, currentItem) => accumulator + currentItem.play_count, 0),
 				tracks: _.map(sorted_tracks, item => {
 					return _.pick(item, ['name', 'album', 'year', 'play_count', 'persistent_id']);
 				})
@@ -85,11 +86,11 @@ const artists = {
 	/**
 	 * Get a summary of artist data and library stats
 	 * @param artist
-	 * @return {{albums: *[], total_plays: {year: *, title: *, total_track_plays: *, tracks: (*|?[])}, most_played: {albums: T[], tracks: T[]}, name}}
+	 * @return Artist
 	 */
-	getSummary: async function(artist) {
-		const albums = await this.getAlbums(artist); // TODO: Work out why this has a "Redundant 'await' for a non-promise type" given it does return a promise
-		const tracks = _.map(await this.getTracks(artist), item => {
+	getSummary: async function(artist): Promise<Artist> {
+		const albums: Album[] = await this.getAlbums(artist);
+		const tracks: Track[] = _.map(await this.getTracks(artist), item => {
 			return _.pick(item, ['name', 'album', 'year', 'play_count', 'persistent_id']);
 		});
 

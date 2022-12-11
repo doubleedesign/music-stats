@@ -1,23 +1,25 @@
 import { cosmosQueries } from '../cosmos/cosmos-utils.js';
+import { TrackResponse, Track } from '../types';
 import _ from 'lodash';
 
 const tracks = {
 	/**
 	 * Get all tracks, sorted by play count
-	 * @return {*}
+	 * @return Promise<Track[]>
 	 */
-	getAll: async function () {
+	getAll: async function (): Promise<Track[]> {
 		const { tracks } = await cosmosQueries.getAllTracks();
+
 		return _.sortBy(tracks, ['play_count']).reverse();
 	},
 
 	/**
 	 * Get the top X most played tracks
 	 * @param number
-	 * @return {*}
+	 * @return Promise<Track[]>
 	 */
-	getTop: function(number) {
-		const data = this.getAll().slice(0, number);
+	getTop: function(number): Promise<Track[]> {
+		const data: Track[] = this.getAll().slice(0, number);
 
 		return _.map(data, item => _.pick(item, ['name', 'artist', 'play_count', 'album', 'year', 'persistent_id']));
 	},
@@ -25,11 +27,11 @@ const tracks = {
 	/**
 	 * Get a single track by its persistent ID
 	 * @param id
-	 * @returns {*}
+	 * @returns Promise<TrackResponse>
 	 */
-	getSingle: async function (id) {
+	getSingle: async function (id): Promise<TrackResponse> {
 		const { tracks } = await cosmosQueries.getAllTracks();
-		const result = tracks.find(item => item.persistent_id === id);
+		const result: Track = tracks.find(item => item.persistent_id === id);
 
 		if (result) {
 			return {
@@ -40,7 +42,8 @@ const tracks = {
         else {
 			return {
 				status: 404,
-				data: `Track ${id} not found`
+				message: `Track ${id} not found`,
+				data: undefined
 			};
 		}
 	}
