@@ -1,4 +1,4 @@
-import tracks from '../data/tracks_test.json' assert { type: 'json' };
+import { cosmosQueries } from '../cosmos/cosmos-utils.js';
 import _ from 'lodash';
 
 const albums = {
@@ -6,7 +6,8 @@ const albums = {
 	 * Get all albums, sorted by total track play count
 	 * @return {*}
 	 */
-	getAll: function() {
+	getAll: async function () {
+		const { tracks } = await cosmosQueries.getAllTracks();
 		const grouped = _.groupBy(tracks, 'album');
 
 		// Don't group tracks without an album into an album with an empty title
@@ -21,7 +22,7 @@ const albums = {
 				title: title,
 				artist: tracks[0].album_artist,
 				year: tracks[0].year,
-				total_track_plays: tracks.reduce((accumulator, currentItem) => accumulator + currentItem.play_count, 0),
+				total_track_plays: undefined, //tracks.reduce((accumulator, currentItem) => accumulator + currentItem.play_count, 0),
 				tracks: _.sortBy(tracks, ['track_number'])
 			};
 		});

@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import { cosmosQueries } from '../cosmos/cosmos-utils.js';
+import _ from 'lodash';
 
 const artists = {
 	/**
@@ -9,7 +9,7 @@ const artists = {
 	getAll: async function () {
 		const { tracks } = await cosmosQueries.getAllTracks();
 		const grouped = _.groupBy(tracks, 'album_artist');
-		let result = [];
+		const result = [];
 		Object.keys(grouped).map(artist => {
 			result.push(artists.getSummary(artist));
 		});
@@ -54,7 +54,7 @@ const artists = {
 			return {
 				title: title,
 				year: tracks[0].year,
-				total_track_plays: tracks.reduce((accumulator, currentItem) => accumulator + currentItem.play_count, 0),
+				total_track_plays: undefined, //tracks.reduce((accumulator, currentItem) => accumulator + currentItem.play_count, 0),
 				tracks: _.map(sorted_tracks, item => {
 					return _.pick(item, ['name', 'album', 'year', 'play_count', 'persistent_id']);
 				})

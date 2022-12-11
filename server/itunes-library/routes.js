@@ -1,7 +1,7 @@
 import express from 'express';
-import artists from './artists.js';
-import albums from './albums.js';
-import tracks from './tracks.js';
+import artists from './artists.ts';
+import albums from './albums.ts';
+import tracks from './tracks.ts';
 import _ from 'lodash';
 
 const router = express.Router();
