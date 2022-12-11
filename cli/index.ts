@@ -1,6 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 import { readFileSync, writeFile } from 'fs';
-import { Track } from '../types';
+import { Track } from './types';
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { CosmosClient } from '@azure/cosmos';
